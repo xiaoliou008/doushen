@@ -1,11 +1,14 @@
 package main
 
 import (
-	"github.com/RaymondCode/simple-demo/service"
 	"github.com/gin-gonic/gin"
+	"github.com/simple-demo/dao"
+	"github.com/simple-demo/service"
 )
 
 func main() {
+	dao.Init_db()
+
 	go service.RunMessageServer()
 
 	r := gin.Default()
