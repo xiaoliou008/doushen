@@ -12,6 +12,12 @@ type Video struct {
 	CreatedAt time.Time
 }
 
+func FindVideosByIdList(id_list []int64) []Video {
+	var videos []Video
+	db.Find(&videos, id_list)
+	return videos
+}
+
 func FindVideosByCreatedTime(t time.Time) []Video {
 	var videos []Video
 	// 获取全部记录（最多30条）
