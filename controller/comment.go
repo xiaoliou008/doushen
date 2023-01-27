@@ -5,6 +5,7 @@ import (
 	"github.com/simple-demo/common"
 	"github.com/simple-demo/service"
 	"net/http"
+	"strconv"
 )
 
 type CommentListResponse struct {
@@ -23,18 +24,40 @@ func CommentAction(c *gin.Context) {
 	actionType := c.Query("action_type")
 
 	if user, exist := service.UsersLoginInfo[token]; exist {
-		if actionType == "1" {
+		if actionType == "1" { // 添加评论
+			videoID := c.Query("video_id")
+			ID, err := strconv.ParseInt(videoID, 10, 64)
+			if err != nil {
+				c.JSON(http.StatusOK, CommentListResponse{
+					Response: common.Response{
+						StatusCode: 3,
+						StatusMsg:  "CommentList ParseInt Error",
+					},
+					CommentList: []common.Comment{},
+				})
+				return
+			}
 			text := c.Query("comment_text")
-			c.JSON(http.StatusOK, CommentActionResponse{Response: common.Response{StatusCode: 0},
-				Comment: common.Comment{
-					Id:         1,
-					User:       user,
-					Content:    text,
-					CreateDate: "05-01",
-				}})
-			return
+			res, comment := service.AddComment(user, ID, text)
+			c.JSON(http.StatusOK, CommentActionResponse{Response: res, Comment: comment})
+		} else if actionType == "2" { // 删除评论
+			commentID := c.Query("comment_id")
+			ID, err := strconv.ParseInt(commentID, 10, 64)
+			if err != nil {
+				c.JSON(http.StatusOK, CommentListResponse{
+					Response: common.Response{
+						StatusCode: 3,
+						StatusMsg:  "CommentList ParseInt Error",
+					},
+					CommentList: []common.Comment{},
+				})
+				return
+			}
+			res, comment := service.DeleteComment(ID)
+			c.JSON(http.StatusOK, CommentActionResponse{Response: res, Comment: comment})
+		} else {
+			c.JSON(http.StatusOK, common.Response{StatusCode: 5, StatusMsg: "Wrong action type"})
 		}
-		c.JSON(http.StatusOK, common.Response{StatusCode: 0})
 	} else {
 		c.JSON(http.StatusOK, common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 	}
@@ -42,8 +65,25 @@ func CommentAction(c *gin.Context) {
 
 // CommentList all videos have same demo comment list
 func CommentList(c *gin.Context) {
+	token := c.Query("token")
+	if _, exist := service.UsersLoginInfo[token]; !exist {
+		c.JSON(http.StatusOK, common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+		return
+	}
+	videoID := c.Query("video_id")
+	ID, err := strconv.ParseInt(videoID, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusOK, CommentListResponse{
+			Response: common.Response{
+				StatusCode: 3,
+				StatusMsg:  "CommentList ParseInt Error",
+			},
+			CommentList: []common.Comment{},
+		})
+		return
+	}
 	c.JSON(http.StatusOK, CommentListResponse{
 		Response:    common.Response{StatusCode: 0},
-		CommentList: DemoComments,
+		CommentList: service.CommentList(ID),
 	})
 }
