@@ -15,7 +15,7 @@ func AddComment(user common.User, videoID int64, text string) (common.Response, 
 		Id:         id,
 		User:       user,
 		Content:    text,
-		CreateDate: createDate.String(),
+		CreateDate: createDate.Format("2006-01-02 15:04:05"),
 	}
 }
 
@@ -41,10 +41,10 @@ func CommentList(videoID int64) []common.Comment {
 					IsFollow:      false,
 				},
 				Content:    comment.Text,
-				CreateDate: comment.CreatedAt.String(),
+				CreateDate: comment.CreatedAt.Format("2006-01-02 15:04:05"),
 			})
 		}
 
 	}
-	return []common.Comment{}
+	return res
 }
