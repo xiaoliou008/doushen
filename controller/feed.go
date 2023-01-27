@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/simple-demo/common"
 	"github.com/simple-demo/service"
@@ -33,8 +34,9 @@ func Feed(c *gin.Context) {
 			return
 		}
 	}
-
-	videoList, nextTime := service.Feed(time.Unix(latestTime, 0))
+	token := c.Query("token")
+	fmt.Printf("debug# time: %v, %v", latestTime, time.Unix(latestTime, 0))
+	videoList, nextTime := service.Feed(time.Unix(latestTime, 0), token)
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  common.Response{StatusCode: 0},
 		VideoList: videoList,

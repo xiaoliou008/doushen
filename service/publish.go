@@ -43,5 +43,5 @@ func Publish(token string, title string, data *multipart.FileHeader) common.Resp
 // PublishList all users have same publish video list
 func GetPublishList(userID int64) []common.Video {
 	videos := dao.FindVideosByAuthor(userID)
-	return convertVideos(videos)
+	return convertVideos(videos, userID)
 }

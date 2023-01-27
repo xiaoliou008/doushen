@@ -13,8 +13,14 @@ func FindFavoriteByUserID(userID int64) []Favorite {
 	return favorites
 }
 
+func FindFavoriteByVideoID(videoID int64) []Favorite {
+	var favorites []Favorite
+	db.Where(&Favorite{VideoId: videoID}).Find(&favorites)
+	return favorites
+}
+
 func UpdateFavorite(userID int64, videoID int64, status int8) int64 {
-	res := db.Model(&User{}).Where("user_id = ? AND video_id = ?", userID, videoID).Update("Status", status)
+	res := db.Model(&Favorite{}).Where("user_id = ? AND video_id = ?", userID, videoID).Update("Status", status)
 	return res.RowsAffected
 }
 

@@ -31,7 +31,7 @@ func FavoriteList(token string) []common.Video {
 			IDList = append(IDList, favorite.VideoId)
 		}
 		res := dao.FindVideosByIdList(IDList)
-		return convertVideos(res)
+		return convertVideos(res, user.Id)
 	} else {
 		return []common.Video{}
 	}
