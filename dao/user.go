@@ -39,6 +39,15 @@ func FindUserByNameAndPassword(username string, password string) (ID int64, err 
 	return users[0].ID, nil
 }
 
+func FindUserByName(username string) (ID int64, err error) {
+	var users []User
+	db.Where(&User{Name: username}).Find(&users)
+	if len(users) < 1 {
+		return 0, fmt.Errorf("UserByNameAndPassword not found")
+	}
+	return users[0].ID, nil
+}
+
 func CreateUserByNameAndPassword(username string, password string) (ID int64, err error) {
 	user := User{Name: username, Password: password}
 	result := db.Create(&user) // 通过数据的指针来创建

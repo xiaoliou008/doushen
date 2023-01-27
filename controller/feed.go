@@ -5,6 +5,7 @@ import (
 	"github.com/simple-demo/common"
 	"github.com/simple-demo/service"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -16,9 +17,27 @@ type FeedResponse struct {
 
 // Feed same demo video list for every request
 func Feed(c *gin.Context) {
+	latestTime := time.Now().Unix()
+	sLatestTime := c.Query("latest_time")
+	if sLatestTime != "" {
+		var err error
+		latestTime, err = strconv.ParseInt(sLatestTime, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusOK, FeedResponse{
+				Response: common.Response{
+					StatusCode: 1,
+				},
+				VideoList: []common.Video{},
+				NextTime:  time.Now().Unix(),
+			})
+			return
+		}
+	}
+
+	videoList, nextTime := service.Feed(time.Unix(latestTime, 0))
 	c.JSON(http.StatusOK, FeedResponse{
 		Response:  common.Response{StatusCode: 0},
-		VideoList: service.Feed(),
-		NextTime:  time.Now().Unix(),
+		VideoList: videoList,
+		NextTime:  nextTime.Unix(),
 	})
 }

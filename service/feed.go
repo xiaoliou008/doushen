@@ -4,12 +4,16 @@ import (
 	"fmt"
 	"github.com/simple-demo/common"
 	"github.com/simple-demo/dao"
+	"time"
 )
 
 // Feed same demo video list for every request
-func Feed() []common.Video {
-	videos := dao.FindAllVideos()
-	return convertVideos(videos)
+func Feed(t time.Time) ([]common.Video, time.Time) {
+	videos := dao.FindVideosByCreatedTime(t)
+	if len(videos) < 1 {
+		return []common.Video{}, time.Now()
+	}
+	return convertVideos(videos), videos[len(videos)-1].CreatedAt
 }
 
 func convertVideos(videos []dao.Video) []common.Video {

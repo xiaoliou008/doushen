@@ -30,7 +30,7 @@ type UserResponse struct {
 }
 
 func Register(username string, password string) UserLoginResponse {
-	if _, err := dao.FindUserByNameAndPassword(username, password); err != nil {
+	if _, err := dao.FindUserByName(username); err != nil { // 用户名不能重复
 		ID, _ := dao.CreateUserByNameAndPassword(username, password)
 		token, _ := CreateToken(int(ID), username)
 		UsersLoginInfo[token] = common.User{
