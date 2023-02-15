@@ -6,14 +6,14 @@ import (
 )
 
 func TestInsertComment(t *testing.T) {
-	Init_db()
+	InitDb()
 	id, _, err := InsertComment(1, 1, "test ljp")
 	tests.AssertEqual(t, err, nil)
 	tests.AssertEqual(t, id, 1)
 }
 
 func TestDeleteComment(t *testing.T) {
-	Init_db()
+	InitDb()
 	err := DeleteComment(1)
 	tests.AssertEqual(t, err, nil)
 }

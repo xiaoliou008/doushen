@@ -13,7 +13,7 @@ type VideoListResponse struct {
 	VideoList []common.Video `json:"video_list"`
 }
 
-// Publish check token then save upload file to public directory
+// Publish 检查token，然后上传视频到七牛云
 func Publish(c *gin.Context) {
 	token := c.PostForm("token")
 	title := c.PostForm("title")
@@ -65,49 +65,3 @@ func PublishList(c *gin.Context) {
 		VideoList: service.GetPublishList(ID),
 	})
 }
-
-//// Publish check token then save upload file to public directory
-//func PublishDemo(c *gin.Context) {
-//	token := c.PostForm("token")
-//
-//	if _, exist := service.UsersLoginInfo[token]; !exist {
-//		c.JSON(http.StatusOK, common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
-//		return
-//	}
-//
-//	data, err := c.FormFile("data")
-//	if err != nil {
-//		c.JSON(http.StatusOK, common.Response{
-//			StatusCode: 1,
-//			StatusMsg:  err.Error(),
-//		})
-//		return
-//	}
-//
-//	filename := filepath.Base(data.Filename)
-//	user := service.UsersLoginInfo[token]
-//	finalName := fmt.Sprintf("%d_%s", user.Id, filename)
-//	saveFile := filepath.Join("./public/", finalName)
-//	if err := c.SaveUploadedFile(data, saveFile); err != nil {
-//		c.JSON(http.StatusOK, common.Response{
-//			StatusCode: 1,
-//			StatusMsg:  err.Error(),
-//		})
-//		return
-//	}
-//
-//	c.JSON(http.StatusOK, common.Response{
-//		StatusCode: 0,
-//		StatusMsg:  finalName + " uploaded successfully",
-//	})
-//}
-//
-//// PublishList all users have same publish video list
-//func PublishListDemo(c *gin.Context) {
-//	c.JSON(http.StatusOK, VideoListResponse{
-//		Response: common.Response{
-//			StatusCode: 0,
-//		},
-//		VideoList: DemoVideos,
-//	})
-//}

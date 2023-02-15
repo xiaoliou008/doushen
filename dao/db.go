@@ -7,9 +7,12 @@ import (
 
 var db *gorm.DB
 
-func Init_db() {
-	//dsn := "root:xxzj9911@tcp(127.0.0.1:3306)/douyin?charset=utf8mb4&parseTime=True&loc=Local"
-	dsn := "root:xxzj9911@tcp(40b1b5d14657.c.methodot.com:33177)/douyin?charset=utf8mb4&parseTime=True&loc=Local"
+// InitDb 初始化数据库
+func InitDb() {
+	// 本地数据库
+	dsn := "root:xxzj9911@tcp(127.0.0.1:3306)/douyin?charset=utf8mb4&parseTime=True&loc=Local"
+	// 云数据库
+	//dsn := "root:xxzj9911@tcp(40b1b5d14657.c.methodot.com:33177)/douyin?charset=utf8mb4&parseTime=True&loc=Local"
 	var err error
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{}) // 不能用 :=
 	if err != nil {

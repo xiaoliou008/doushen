@@ -16,7 +16,7 @@ type FeedResponse struct {
 	NextTime  int64          `json:"next_time,omitempty"`
 }
 
-// Feed same demo video list for every request
+// Feed 获取最新30个短视频
 func Feed(c *gin.Context) {
 	latestTime := time.Now().Unix()
 	sLatestTime := c.Query("latest_time")

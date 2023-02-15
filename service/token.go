@@ -9,17 +9,19 @@ import (
 // 自定义令牌
 var mySigningKey = []byte("Key of ljp")
 
+// MyClaim 对每个用户发放的权限
 type MyClaim struct {
-	Username       interface{}
-	Id             int
-	StandardClaims jwt.StandardClaims
+	Username       interface{}        // 用户名
+	Id             int                // id
+	StandardClaims jwt.StandardClaims // 使用jwt实现鉴权
 }
 
+// Valid 有效性
 func (m MyClaim) Valid() error {
 	return nil
 }
 
-// 创建token
+// CreateToken 创建token
 func CreateToken(userid int, username interface{}) (s string, err error) {
 	// Create the Claims
 	claims := MyClaim{

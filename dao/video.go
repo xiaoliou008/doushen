@@ -2,22 +2,25 @@ package dao
 
 import "time"
 
+// Video 视频
 type Video struct {
 	//gorm.Model
-	ID        int64
-	Title     string
-	Author    int64
-	PlayUrl   string
-	CoverUrl  string
-	CreatedAt time.Time
+	ID        int64     // 自增主键
+	Title     string    // 视频标题
+	Author    int64     // 视频作者
+	PlayUrl   string    // 视频播放URL
+	CoverUrl  string    // 视频封面URL
+	CreatedAt time.Time // 创建时间
 }
 
+// FindVideosByIdList 根据ID查找视频
 func FindVideosByIdList(id_list []int64) []Video {
 	var videos []Video
 	db.Find(&videos, id_list)
 	return videos
 }
 
+// FindVideosByCreatedTime 更具创建时间查找视频
 func FindVideosByCreatedTime(t time.Time) []Video {
 	var videos []Video
 	// 获取全部记录（最多30条）
@@ -25,6 +28,7 @@ func FindVideosByCreatedTime(t time.Time) []Video {
 	return videos
 }
 
+// FindVideosByAuthor 根据作者查找视频
 func FindVideosByAuthor(authorID int64) []Video {
 	var videos []Video
 	// 获取全部记录
@@ -32,6 +36,7 @@ func FindVideosByAuthor(authorID int64) []Video {
 	return videos
 }
 
+// InsertVideo 插入新的视频
 func InsertVideo(title string, author int64, playUrl string, coverUrl string) error {
 	video := Video{
 		Title:     title,

@@ -4,13 +4,15 @@ import (
 	"fmt"
 )
 
+// User 用户
 type User struct {
 	//gorm.Model
-	ID       int64
-	Name     string
-	Password string
+	ID       int64  // 自增主键
+	Name     string // 用户名
+	Password string // 密码
 }
 
+// 查询所有的用户（用于测试）
 func findAllUsers() {
 	var users []User
 	// 获取全部记录
@@ -21,6 +23,7 @@ func findAllUsers() {
 	println(result.Error)        // returns error
 }
 
+// FindUserByID 根据ID查询用户
 func FindUserByID(id int64) (username string, err error) {
 	var users []User
 	db.Where([]int64{id}).Find(&users)
@@ -30,6 +33,7 @@ func FindUserByID(id int64) (username string, err error) {
 	return users[0].Name, nil
 }
 
+// FindUserByNameAndPassword 根据用户名和密码查询用户
 func FindUserByNameAndPassword(username string, password string) (ID int64, err error) {
 	var users []User
 	db.Where(&User{Name: username, Password: password}).Find(&users)
@@ -39,6 +43,7 @@ func FindUserByNameAndPassword(username string, password string) (ID int64, err 
 	return users[0].ID, nil
 }
 
+// FindUserByName 根据用户名查询用户
 func FindUserByName(username string) (ID int64, err error) {
 	var users []User
 	db.Where(&User{Name: username}).Find(&users)
@@ -48,6 +53,7 @@ func FindUserByName(username string) (ID int64, err error) {
 	return users[0].ID, nil
 }
 
+// CreateUserByNameAndPassword 使用用户名和密码创建用户
 func CreateUserByNameAndPassword(username string, password string) (ID int64, err error) {
 	user := User{Name: username, Password: password}
 	result := db.Create(&user) // 通过数据的指针来创建

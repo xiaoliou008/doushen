@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 )
 
-// Publish check token then save upload file to public directory
+// Publish 检查token鉴权，然后发布标题名为title的视频
 func Publish(token string, title string, data *multipart.FileHeader) common.Response {
 	filename := filepath.Base(data.Filename)
 	user := UsersLoginInfo[token]
@@ -40,7 +40,7 @@ func Publish(token string, title string, data *multipart.FileHeader) common.Resp
 	}
 }
 
-// PublishList all users have same publish video list
+// GetPublishList 获取userID用户的发布视频的列表
 func GetPublishList(userID int64) []common.Video {
 	videos := dao.FindVideosByAuthor(userID)
 	return convertVideos(videos, userID)

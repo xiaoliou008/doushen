@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// Feed same demo video list for every request
+// Feed 查询最新的30个视频
 func Feed(t time.Time, token string) ([]common.Video, time.Time) {
 	videos := dao.FindVideosByCreatedTime(t)
 	if len(videos) < 1 {
@@ -20,6 +20,7 @@ func Feed(t time.Time, token string) ([]common.Video, time.Time) {
 	return convertVideos(videos, userID), videos[len(videos)-1].CreatedAt
 }
 
+// 格式转换，把数据库得到的Video格式转换为common.Video格式
 func convertVideos(videos []dao.Video, userID int64) []common.Video {
 	var res []common.Video
 	for _, video := range videos {

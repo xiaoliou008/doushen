@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// FavoriteAction no practical effect, just check if token is valid
+// FavoriteAction 点赞或取消点赞
 func FavoriteAction(c *gin.Context) {
 	token := c.Query("token")
 	videoID := c.Query("video_id")
@@ -27,7 +27,7 @@ func FavoriteAction(c *gin.Context) {
 	c.JSON(http.StatusOK, service.FavoriteAction(token, ID, action))
 }
 
-// FavoriteList all users have same favorite video list
+// FavoriteList 获取点赞列表
 func FavoriteList(c *gin.Context) {
 	token := c.Query("token")
 	if _, exist := service.UsersLoginInfo[token]; !exist {

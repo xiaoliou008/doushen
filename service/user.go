@@ -5,8 +5,7 @@ import (
 	"github.com/simple-demo/dao"
 )
 
-// UsersLoginInfo use map to store user info, and key is token (username+password for demo)
-// user data will be cleared every time the server starts
+// UsersLoginInfo 缓存用户的登录信息，当查询不到时到数据库中查询，服务器重启时清空缓存
 // test data: username=zhanglei, password=douyin
 var UsersLoginInfo = map[string]common.User{
 	"zhangleidouyin": {
@@ -18,17 +17,20 @@ var UsersLoginInfo = map[string]common.User{
 	},
 }
 
+// UserLoginResponse 用户登录响应
 type UserLoginResponse struct {
 	common.Response
 	UserId int64  `json:"user_id,omitempty"`
 	Token  string `json:"token"`
 }
 
+// UserResponse 用户响应
 type UserResponse struct {
 	common.Response
 	User common.User `json:"user"`
 }
 
+// Register 注册
 func Register(username string, password string) UserLoginResponse {
 	if _, err := dao.FindUserByName(username); err != nil { // 用户名不能重复
 		ID, _ := dao.CreateUserByNameAndPassword(username, password)
@@ -50,6 +52,7 @@ func Register(username string, password string) UserLoginResponse {
 	}
 }
 
+// Login 登录
 func Login(username string, password string) UserLoginResponse {
 	if ID, err := dao.FindUserByNameAndPassword(username, password); err != nil {
 		return UserLoginResponse{Response: common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"}}
@@ -70,6 +73,7 @@ func Login(username string, password string) UserLoginResponse {
 	}
 }
 
+// UserInfo 获取用户信息
 func UserInfo(token string) UserResponse {
 	if user, exist := UsersLoginInfo[token]; exist {
 		return UserResponse{

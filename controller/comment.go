@@ -8,17 +8,19 @@ import (
 	"strconv"
 )
 
+// CommentListResponse 评论列表响应
 type CommentListResponse struct {
 	common.Response
 	CommentList []common.Comment `json:"comment_list,omitempty"`
 }
 
+// CommentActionResponse 评论行为响应
 type CommentActionResponse struct {
 	common.Response
 	Comment common.Comment `json:"comment,omitempty"`
 }
 
-// CommentAction no practical effect, just check if token is valid
+// CommentAction 发表评论
 func CommentAction(c *gin.Context) {
 	token := c.Query("token")
 	actionType := c.Query("action_type")
@@ -63,7 +65,7 @@ func CommentAction(c *gin.Context) {
 	}
 }
 
-// CommentList all videos have same demo comment list
+// CommentList 获取评论列表
 func CommentList(c *gin.Context) {
 	token := c.Query("token")
 	if _, exist := service.UsersLoginInfo[token]; !exist {

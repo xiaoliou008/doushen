@@ -6,6 +6,7 @@ import (
 	"github.com/simple-demo/dao"
 )
 
+// AddComment 增加评论
 func AddComment(user common.User, videoID int64, text string) (common.Response, common.Comment) {
 	id, createDate, err := dao.InsertComment(user.Id, videoID, text)
 	if err != nil {
@@ -19,6 +20,7 @@ func AddComment(user common.User, videoID int64, text string) (common.Response, 
 	}
 }
 
+// DeleteComment 删除评论
 func DeleteComment(commentID int64) (common.Response, common.Comment) {
 	if err := dao.DeleteComment(commentID); err != nil {
 		return common.Response{StatusCode: 2, StatusMsg: fmt.Sprint(err)}, common.Comment{}
@@ -26,6 +28,7 @@ func DeleteComment(commentID int64) (common.Response, common.Comment) {
 	return common.Response{StatusCode: 0}, common.Comment{}
 }
 
+// CommentList 获取评论列表
 func CommentList(videoID int64) []common.Comment {
 	var res []common.Comment
 	comments := dao.FindCommentsByVideoID(videoID)
