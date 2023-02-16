@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/simple-demo/common"
 	"github.com/simple-demo/service"
 	"net/http"
+	"strconv"
 )
 
 type UserListResponse struct {
@@ -12,43 +14,65 @@ type UserListResponse struct {
 	UserList []common.User `json:"user_list"`
 }
 
-// RelationAction no practical effect, just check if token is valid
+// RelationAction 关注或取关
 func RelationAction(c *gin.Context) {
 	token := c.Query("token")
+	toUserId := c.Query("to_user_id")
+	actionType := c.Query("action_type")
+	userID, err := strconv.ParseInt(toUserId, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusOK, common.Response{StatusCode: 2, StatusMsg: "RelationAction ParseInt ID Error"})
+		return
+	}
+	action, err := strconv.ParseInt(actionType, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusOK, common.Response{StatusCode: 2, StatusMsg: "RelationAction ParseInt action Error"})
+		return
+	}
 
-	if _, exist := service.UsersLoginInfo[token]; exist {
-		c.JSON(http.StatusOK, common.Response{StatusCode: 0})
+	if user, exist := service.UsersLoginInfo[token]; exist {
+		err := service.RelationAction(user, userID, int8(action))
+		if err != nil {
+			c.JSON(http.StatusOK, common.Response{StatusCode: 2, StatusMsg: fmt.Sprint(err)})
+		} else {
+			c.JSON(http.StatusOK, common.Response{StatusCode: 0})
+		}
 	} else {
 		c.JSON(http.StatusOK, common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 	}
 }
 
-// FollowList all users have same follow list
+// FollowList 查询关注列表
 func FollowList(c *gin.Context) {
-	c.JSON(http.StatusOK, UserListResponse{
-		Response: common.Response{
-			StatusCode: 0,
-		},
-		UserList: []common.User{DemoUser},
-	})
+	token := c.Query("token")
+	if user, exist := service.UsersLoginInfo[token]; exist {
+		c.JSON(http.StatusOK, UserListResponse{
+			Response: common.Response{
+				StatusCode: 0,
+			},
+			UserList: service.FollowList(user),
+		})
+	} else {
+		c.JSON(http.StatusOK, common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	}
 }
 
-// FollowerList all users have same follower list
+// FollowerList 查询粉丝列表
 func FollowerList(c *gin.Context) {
-	c.JSON(http.StatusOK, UserListResponse{
-		Response: common.Response{
-			StatusCode: 0,
-		},
-		UserList: []common.User{DemoUser},
-	})
+	token := c.Query("token")
+	if user, exist := service.UsersLoginInfo[token]; exist {
+		c.JSON(http.StatusOK, UserListResponse{
+			Response: common.Response{
+				StatusCode: 0,
+			},
+			UserList: service.FollowerList(user),
+		})
+	} else {
+		c.JSON(http.StatusOK, common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	}
 }
 
-// FriendList all users have same friend list
+// FriendList TODO：暂时实现为粉丝列表
 func FriendList(c *gin.Context) {
-	c.JSON(http.StatusOK, UserListResponse{
-		Response: common.Response{
-			StatusCode: 0,
-		},
-		UserList: []common.User{DemoUser},
-	})
+	FollowerList(c)
 }

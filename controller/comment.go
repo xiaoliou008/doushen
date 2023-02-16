@@ -68,7 +68,8 @@ func CommentAction(c *gin.Context) {
 // CommentList 获取评论列表
 func CommentList(c *gin.Context) {
 	token := c.Query("token")
-	if _, exist := service.UsersLoginInfo[token]; !exist {
+	user, exist := service.UsersLoginInfo[token]
+	if !exist {
 		c.JSON(http.StatusOK, common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 		return
 	}
@@ -86,6 +87,6 @@ func CommentList(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, CommentListResponse{
 		Response:    common.Response{StatusCode: 0},
-		CommentList: service.CommentList(ID),
+		CommentList: service.CommentList(ID, user.Id),
 	})
 }

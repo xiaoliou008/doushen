@@ -33,14 +33,23 @@ func convertVideos(videos []dao.Video, userID int64) []common.Video {
 					isFavorite = true
 				}
 			}
+			follow := dao.FindRelationsByFanID(video.Author)
+			fans := dao.FindRelationsByUserID(video.Author)
+			isFollow := false
+			for _, fan := range fans {
+				if fan.FanId == userID {
+					isFollow = true
+					break
+				}
+			}
 			res = append(res, common.Video{
 				Id: video.ID,
 				Author: common.User{
 					Id:            video.Author,
 					Name:          name,
-					FollowCount:   0,
-					FollowerCount: 0,
-					IsFollow:      false,
+					FollowCount:   int64(len(follow)),
+					FollowerCount: int64(len(fans)),
+					IsFollow:      isFollow,
 				},
 				PlayUrl:       video.PlayUrl,
 				CoverUrl:      video.CoverUrl,

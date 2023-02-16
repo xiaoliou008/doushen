@@ -29,19 +29,28 @@ func DeleteComment(commentID int64) (common.Response, common.Comment) {
 }
 
 // CommentList 获取评论列表
-func CommentList(videoID int64) []common.Comment {
+func CommentList(videoID, userID int64) []common.Comment {
 	var res []common.Comment
 	comments := dao.FindCommentsByVideoID(videoID)
 	for _, comment := range comments {
 		if username, err := dao.FindUserByID(comment.UserId); err == nil {
+			follow := dao.FindRelationsByFanID(comment.UserId)
+			fans := dao.FindRelationsByUserID(comment.UserId)
+			isFollow := false
+			for _, fan := range fans {
+				if fan.FanId == userID {
+					isFollow = true
+					break
+				}
+			}
 			res = append(res, common.Comment{
 				Id: comment.ID,
 				User: common.User{
 					Id:            comment.UserId,
 					Name:          username,
-					FollowCount:   0,
-					FollowerCount: 0,
-					IsFollow:      false,
+					FollowCount:   int64(len(follow)),
+					FollowerCount: int64(len(fans)),
+					IsFollow:      isFollow,
 				},
 				Content:    comment.Text,
 				CreateDate: comment.CreatedAt.Format("2006-01-02 15:04:05"),

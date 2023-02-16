@@ -14,9 +14,9 @@ type Video struct {
 }
 
 // FindVideosByIdList 根据ID查找视频
-func FindVideosByIdList(id_list []int64) []Video {
+func FindVideosByIdList(idList []int64) []Video {
 	var videos []Video
-	db.Find(&videos, id_list)
+	db.Find(&videos, idList)
 	return videos
 }
 

@@ -38,9 +38,9 @@ func Register(username string, password string) UserLoginResponse {
 		UsersLoginInfo[token] = common.User{
 			Id:            ID,
 			Name:          username,
-			FollowCount:   0,     // TODO
-			FollowerCount: 0,     // TODO
-			IsFollow:      false, // TODO
+			FollowCount:   0,
+			FollowerCount: 0,
+			IsFollow:      false,
 		}
 		return UserLoginResponse{
 			Response: common.Response{StatusCode: 0},
@@ -58,11 +58,13 @@ func Login(username string, password string) UserLoginResponse {
 		return UserLoginResponse{Response: common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"}}
 	} else {
 		token, _ := CreateToken(int(ID), username)
+		follow := dao.FindRelationsByFanID(ID)
+		fans := dao.FindRelationsByUserID(ID)
 		UsersLoginInfo[token] = common.User{
 			Id:            ID,
 			Name:          username,
-			FollowCount:   0,     // TODO
-			FollowerCount: 0,     // TODO
+			FollowCount:   int64(len(follow)),
+			FollowerCount: int64(len(fans)),
 			IsFollow:      false, // TODO
 		}
 		return UserLoginResponse{
@@ -85,4 +87,21 @@ func UserInfo(token string) UserResponse {
 			Response: common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
 		}
 	}
+}
+
+// 格式转换，把数据库得到的Video格式转换为common.Video格式
+func convertUsers(users []dao.User) []common.User {
+	var res []common.User
+	for _, user := range users {
+		follow := dao.FindRelationsByFanID(user.ID)
+		fans := dao.FindRelationsByUserID(user.ID)
+		res = append(res, common.User{
+			Id:            user.ID,
+			Name:          user.Name,
+			FollowCount:   int64(len(follow)),
+			FollowerCount: int64(len(fans)),
+			IsFollow:      true,
+		})
+	}
+	return res
 }

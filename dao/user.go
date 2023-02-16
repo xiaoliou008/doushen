@@ -33,6 +33,13 @@ func FindUserByID(id int64) (username string, err error) {
 	return users[0].Name, nil
 }
 
+// FindUsersByIDList 根据ID列表查询若干用户
+func FindUsersByIDList(idList []int64) []User {
+	var users []User
+	db.Find(&users, idList)
+	return users
+}
+
 // FindUserByNameAndPassword 根据用户名和密码查询用户
 func FindUserByNameAndPassword(username string, password string) (ID int64, err error) {
 	var users []User
