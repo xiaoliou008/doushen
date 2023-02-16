@@ -34,7 +34,6 @@ func Publish(token string, title string, data *multipart.FileHeader) common.Resp
 			StatusMsg:  "Insert video failed",
 		}
 	}
-	println("debug# after InsertVideo")
 	return common.Response{
 		StatusCode: 0,
 		StatusMsg:  finalName + " uploaded successfully",
