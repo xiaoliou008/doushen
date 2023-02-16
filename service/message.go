@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/simple-demo/common"
+	"github.com/simple-demo/dao"
 	"io"
 	"net"
 	"sync"
@@ -70,4 +71,27 @@ func process(conn net.Conn) {
 			fmt.Printf("Push message failed: %v\n", err)
 		}
 	}
+}
+
+// MessageAction no practical effect, just check if token is valid
+func MessageAction(fromID, toID int64, content string) error {
+	_, _, err := dao.InsertMessage(fromID, toID, content)
+	return err
+}
+
+// MessageChat all users have same follow list
+func MessageChat(fromID, toID int64) []common.Message {
+	messages := dao.FindMessageByTwoID(fromID, toID)
+	res := make([]common.Message, len(messages))
+	for _, message := range messages {
+		println(message.Content)
+		res = append(res, common.Message{
+			Id:         message.ID,
+			ToUserId:   message.ToId,
+			FromUserId: message.FromId,
+			Content:    message.Content,
+			CreateTime: message.CreatedAt.Unix(),
+		})
+	}
+	return res
 }

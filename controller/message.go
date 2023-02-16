@@ -1,19 +1,16 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/simple-demo/common"
 	"github.com/simple-demo/service"
 	"net/http"
 	"strconv"
-	"sync/atomic"
-	"time"
 )
 
-var tempChat = map[string][]common.Message{}
-
-var messageIdSequence = int64(1)
+//var tempChat = map[string][]common.Message{}
+//
+//var messageIdSequence = int64(1)
 
 type ChatResponse struct {
 	common.Response
@@ -27,22 +24,12 @@ func MessageAction(c *gin.Context) {
 	content := c.Query("content")
 
 	if user, exist := service.UsersLoginInfo[token]; exist {
-		userIdB, _ := strconv.Atoi(toUserId)
-		chatKey := genChatKey(user.Id, int64(userIdB))
-
-		atomic.AddInt64(&messageIdSequence, 1)
-		curMessage := common.Message{
-			Id:         messageIdSequence,
-			Content:    content,
-			CreateTime: time.Now().Format(time.Kitchen),
-		}
-
-		if messages, exist := tempChat[chatKey]; exist {
-			tempChat[chatKey] = append(messages, curMessage)
+		userIdB, _ := strconv.ParseInt(toUserId, 10, 64)
+		if err := service.MessageAction(user.Id, userIdB, content); err != nil {
+			c.JSON(http.StatusOK, common.Response{StatusCode: 2, StatusMsg: err.Error()})
 		} else {
-			tempChat[chatKey] = []common.Message{curMessage}
+			c.JSON(http.StatusOK, common.Response{StatusCode: 0})
 		}
-		c.JSON(http.StatusOK, common.Response{StatusCode: 0})
 	} else {
 		c.JSON(http.StatusOK, common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 	}
@@ -52,20 +39,20 @@ func MessageAction(c *gin.Context) {
 func MessageChat(c *gin.Context) {
 	token := c.Query("token")
 	toUserId := c.Query("to_user_id")
-
 	if user, exist := service.UsersLoginInfo[token]; exist {
-		userIdB, _ := strconv.Atoi(toUserId)
-		chatKey := genChatKey(user.Id, int64(userIdB))
-
-		c.JSON(http.StatusOK, ChatResponse{Response: common.Response{StatusCode: 0}, MessageList: tempChat[chatKey]})
+		userIdB, _ := strconv.ParseInt(toUserId, 10, 64)
+		println("user id", user.Id)
+		println("userIdB", userIdB)
+		c.JSON(http.StatusOK, ChatResponse{Response: common.Response{StatusCode: 0}, MessageList: service.MessageChat(user.Id, userIdB)})
+		//c.JSON(http.StatusOK, ChatResponse{Response: common.Response{StatusCode: 0}, MessageList: []common.Message{}})
 	} else {
 		c.JSON(http.StatusOK, common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
 	}
 }
 
-func genChatKey(userIdA int64, userIdB int64) string {
-	if userIdA > userIdB {
-		return fmt.Sprintf("%d_%d", userIdB, userIdA)
-	}
-	return fmt.Sprintf("%d_%d", userIdA, userIdB)
-}
+//func genChatKey(userIdA int64, userIdB int64) string {
+//	if userIdA > userIdB {
+//		return fmt.Sprintf("%d_%d", userIdB, userIdA)
+//	}
+//	return fmt.Sprintf("%d_%d", userIdA, userIdB)
+//}

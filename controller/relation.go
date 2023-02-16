@@ -14,6 +14,11 @@ type UserListResponse struct {
 	UserList []common.User `json:"user_list"`
 }
 
+type FriendListResponse struct {
+	common.Response
+	UserList []common.FriendUser `json:"user_list"`
+}
+
 // RelationAction 关注或取关
 func RelationAction(c *gin.Context) {
 	token := c.Query("token")
@@ -72,7 +77,17 @@ func FollowerList(c *gin.Context) {
 	}
 }
 
-// FriendList TODO：暂时实现为粉丝列表
+// FriendList TODO 暂时实现为粉丝列表
 func FriendList(c *gin.Context) {
-	FollowerList(c)
+	token := c.Query("token")
+	if user, exist := service.UsersLoginInfo[token]; exist {
+		c.JSON(http.StatusOK, FriendListResponse{
+			Response: common.Response{
+				StatusCode: 0,
+			},
+			UserList: service.FriendList(user),
+		})
+	} else {
+		c.JSON(http.StatusOK, common.Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
+	}
 }

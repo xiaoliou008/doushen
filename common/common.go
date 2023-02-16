@@ -30,10 +30,23 @@ type User struct {
 	IsFollow      bool   `json:"is_follow,omitempty"`
 }
 
+type FriendUser struct {
+	Id            int64  `json:"id,omitempty"`
+	Name          string `json:"name,omitempty"`
+	FollowCount   int64  `json:"follow_count,omitempty"`
+	FollowerCount int64  `json:"follower_count,omitempty"`
+	IsFollow      bool   `json:"is_follow,omitempty"`
+	Avatar        string `json:"avatar,omitempty"`
+	Message       string `json:"message,omitempty"`
+	MsgType       int64  `json:"msgType,omitempty"`
+}
+
 type Message struct {
 	Id         int64  `json:"id,omitempty"`
+	ToUserId   int64  `json:"to_user_id ,omitempty"`
+	FromUserId int64  `json:"from_user_id ,omitempty"`
 	Content    string `json:"content,omitempty"`
-	CreateTime string `json:"create_time,omitempty"`
+	CreateTime int64  `json:"create_time,omitempty"`
 }
 
 type MessageSendEvent struct {
