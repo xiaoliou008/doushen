@@ -18,6 +18,7 @@ func Publish(token string, title string, data *multipart.FileHeader) common.Resp
 		fmt.Printf("Publish Error: %v", err)
 		return common.Response{StatusCode: 2, StatusMsg: "File open failed"}
 	}
+	println("debug# before UploadFile")
 	filename, _, _, err = UploadFile(filename, file)
 	if err != nil {
 		fmt.Printf("Publish Error: %v", err)
@@ -25,7 +26,7 @@ func Publish(token string, title string, data *multipart.FileHeader) common.Resp
 	}
 	playURL := GetPublicURL(filename)
 	coverURL := "https://cdn.pixabay.com/photo/2016/03/27/18/10/bear-1283347_1280.jpg" // TODO: 制作封面
-
+	println("debug# before InsertVideo")
 	if err := dao.InsertVideo(title, user.Id, playURL, coverURL); err != nil {
 		fmt.Printf("Publish Error: %v", err)
 		return common.Response{
@@ -33,7 +34,7 @@ func Publish(token string, title string, data *multipart.FileHeader) common.Resp
 			StatusMsg:  "Insert video failed",
 		}
 	}
-
+	println("debug# after InsertVideo")
 	return common.Response{
 		StatusCode: 0,
 		StatusMsg:  finalName + " uploaded successfully",
